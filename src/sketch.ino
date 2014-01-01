@@ -1,4 +1,11 @@
 // -*- c -*-
+// myRobotRemote Arduino sketch
+//
+// Copyright (c) 2012 Michael Margolis
+// Copyright (c) 2013 Dave Sieh
+//
+// See LICENSE.txt for details.
+
 #include <RobotMotor.h>
 #include <LEDBlinker.h>
 #include <SoftServo.h>

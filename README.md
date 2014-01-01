@@ -9,3 +9,11 @@ control the robot.
 In addition to the remote control, the robot still has some 'senses' in that it 
 will try to perform edge detection. Don't want to run off the edge of the world.
 
+Copyright
+=========
+
+Copyright (c) 2012 Michael Margolis
+
+Copyright (c) 2013 Dave Sieh
+
+See LICENSE.txt for details.
