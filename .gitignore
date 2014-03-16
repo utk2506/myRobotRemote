@@ -1,4 +1,5 @@
 *~
+*.swp
 .build
 lib/AFMotor
 lib/Battery
@@ -10,3 +11,4 @@ lib/Move
 lib/PingSensor
 lib/RobotMotor
 lib/SoftServo
+lib/pspc_support

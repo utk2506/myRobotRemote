@@ -1,24 +1,34 @@
 // myRobotRemote Arduino sketch
 //
 // Copyright (c) 2012 Michael Margolis
-// Copyright (c) 2013 Dave Sieh
+// Copyright (c) 2013,2014 Dave Sieh
 //
 // See LICENSE.txt for details.
 
 #include <Arduino.h>
 #include "Remote.h"
 #include <IRremote.h>
-#include <Move.h>
+#include <pspc_support.h>
+#include "Move.h"
 
 // IR remote keycodes:replace this with codes for your remote
 // These are the codes from the Gray RCA remote
-const long IR_MOVE_FORWARD = 50190375;
-const long IR_MOVE_BACK    = 50198535;
-const long IR_MOVE_LEFT    = 50165895;
-const long IR_MOVE_RIGHT   = 50157735;
-const long IR_PIVOT_CW     = 50149575;
-const long IR_PIVOT_CCW    = 50194455;
-const long IR_HALT         = 50137335;
+//const long IR_MOVE_FORWARD = 50190375;
+//const long IR_MOVE_BACK    = 50198535;
+//const long IR_MOVE_LEFT    = 50165895;
+//const long IR_MOVE_RIGHT   = 50157735;
+//const long IR_PIVOT_CW     = 50149575;
+//const long IR_PIVOT_CCW    = 50194455;
+//const long IR_HALT         = 50137335;
+
+// These are the codes from the Polaroid remote
+const long IR_MOVE_FORWARD = 284123295;
+const long IR_MOVE_BACK    = 284155935;
+const long IR_MOVE_LEFT    = 284131965;
+const long IR_MOVE_RIGHT   = 284148285;
+const long IR_PIVOT_CW     = 284106975;
+const long IR_PIVOT_CCW    = 284113095;
+const long IR_HALT         = 284115645;
 
 // Command constants 
 
@@ -36,14 +46,26 @@ const char MOVE_SPEED        = 's';
 const char MOVE_SLOWER       = 'v'; // reduce speed 
 const char MOVE_FASTER       = '^'; // increase speed 
 
-const char* moveStates[] = { // Debug Labels
-  "Left", 
-  "Right", 
-  "Forward", 
-  "Back", 
-  "Rotate", 
-  "Stop"
+#ifdef REMOTE_DEBUG
+#define STATE_NAME(i) STRING_FROM_TABLE(moveStates,i)
+
+const char moveLeft[] PROGMEM = "Left";
+const char moveRight[] PROGMEM = "Right";
+const char moveForward[] PROGMEM = "Forward";
+const char moveBack[] PROGMEM = "Back";
+const char moveRotate[] PROGMEM = "Rotate";
+const char moveStop[] PROGMEM = "Stop";
+
+PGM_P const moveStates[] PROGMEM = {
+  moveLeft,
+  moveRight,
+  moveForward,
+  moveBack,
+  moveRotate,
+  moveStop
 };
+
+#endif
 
 
 Remote::Remote(IRrecv *irReceiver, Move *move) {
@@ -61,16 +83,13 @@ void Remote::service() {
   
   if (irrecv->decode(&results)) {
     if (results.decode_type != UNKNOWN) {
-      //Serial.println(results.value); // uncomment to see raw result
+#ifdef REMOTE_DEBUG
+      Serial.println(P("Raw IR value: "));
+      Serial.println(results.value); 
+#endif
       convertIrToCommand(results.value);
     }
     irrecv->resume(); // Receive the next value
-  }  
-
-  // additional support for serial commands
-  if(Serial.available() ) {
-    int cmd = Serial.read();
-    processCommand(cmd);   
   }  
 }
 
@@ -90,8 +109,10 @@ void Remote::convertIrToCommand(long value) {
 
 void Remote::changeCmdState(int newState) {
   if(newState != commandState) {
-    Serial.print("Changing Cmd state from "); Serial.print(moveStates[commandState]);
-    Serial.print(" to "); Serial.println(moveStates[newState]);
+#ifdef REMOTE_DEBUG
+    Serial.print(P("Changing Cmd state from ")); Serial.print(STATE_NAME(commandState));
+    Serial.print(P(" to ")); Serial.println(STATE_NAME(newState));
+#endif
     commandState = newState;
   } 
 }
@@ -123,7 +144,11 @@ void Remote::processCommand(int cmd, int val) {
 //   case SLOWER       : moveSlower(speedIncrement);                  break;
 //   case FASTER       : moveFaster(speedIncrement);                  break;
   case '\r' : case '\n': break; // ignore cr and lf
-  default :  Serial.print('['); Serial.write(cmd); Serial.println("] Ignored");  break;
+  default :  
+#ifdef REMOTE_DEBUG
+                         Serial.print(P("[")); Serial.write(cmd); Serial.println(P("] Ignored"));  
+#endif
+                         break;
   }    
 }
 
