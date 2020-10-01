@@ -6,16 +6,16 @@
 //
 // See LICENSE.txt for details.
 
-#include <RobotMotor.h>
-#include <LEDBlinker.h>
-#include <IRremote.h>
-#include "Move.h"
-#include <pspc_support.h>
-#include "Remote.h"
+#include <RobotMotor.h> //include RobotMotor.h library zip file.
+#include <LEDBlinker.h> //include LEDBlinker.h library zip file.
+#include <IRremote.h> //include IRremote.h library zip file.
+#include "Move.h"     //include Move.h library zip file.
+#include <pspc_support.h> //include pspc_support.h library zip file.
+#include "Remote.h"     //include Remote.h library zip file.
 
-#define LED_PIN 13
+#define LED_PIN 13      //connect positive pin of LED on 13 PIN of arduino
 
-const byte irReceivePin = A3;
+const byte irReceivePin = A3;  //connect receiver pin of IR receiver on A3 of arduino
 
 IRrecv irrecv(irReceivePin);
 LEDBlinker blinker(LED_PIN);
